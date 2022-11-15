@@ -70,11 +70,12 @@ changes.addEventListener("click",(e) => {
             })
             break;
         case "minus":
-            currentNumber = currentNumber - 1;
+            if (currentNumber > 0){
+                currentNumber = currentNumber - 1;
             nummberChange.innerHTML = currentNumber;
             updateDoc(docRef, {
                 numberValue: `${currentNumber}`
-            })
+            })}
             break;
         default:
             break;

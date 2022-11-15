@@ -4,15 +4,16 @@ const passSignup = document.getElementById("floatingPasswordSignUp")
 const passSignin = document.getElementById("floatingPassword-signin")
 const emailSignin = document.getElementById("floatingInput-signin")
 const nummberChange = document.querySelector(".numberChange")
-const plus = document.querySelector(".plus")
-const minus = document.querySelector(".minus")
+const changes = document.getElementById("changes")
 
 import { initializeApp } from "firebase/app"
 import {
     getFirestore, collection, onSnapshot,
     addDoc, deleteDoc, doc,
-    updateDoc
+    updateDoc,
+    getDocs, getDoc
 } from "firebase/firestore"
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyD4krVZ0LaMmvzBfuDCjJYso6LkjIgIaNY",
@@ -29,34 +30,55 @@ const db = getFirestore()
 
 const colRef = collection(db, `login`)
 
-const number = collection(db, `number`)
+let currentNumber = 0;
+const balls = collection(db, 'number')
+// const ball = collection(db, 'number', 'gzeyGptBTv9PoPig7vHv' )
+// getDoc(ball)
+//   .then((doc) => {
+//     console.log(doc.data(), doc.id)
+//   })
 
 
 
-onSnapshot(number, (snapshot) => {
-    let currentnumb = []
+
+
+onSnapshot(balls, (snapshot) => {
+    let ball = []
     snapshot.docs.forEach((doc) =>{
-        currentnumb.push({...doc.data(), id: doc.id})
+        ball.push({...doc.data(), id: doc.id})
     })
-    nummberChange.innerHTML = `${currentnumb[0].nummberValue}`
+    ball.forEach((item) => {
+        let currentNumbel = item.numberValue;
+        console.log(currentNumbel)
+        nummberChange.innerHTML = `${currentNumbel}`;
+        currentNumber = parseInt(currentNumbel);
+        
+    })
   })
-plus.addEventListener('click', (e) => {
-    console.log("lmao")
-    const update = doc(db, "number", "gzeyGptBTv9PoPig7vHv")
-    onSnapshot(number, (snapshot) => {
-        let currentnumb = []
-        snapshot.docs.forEach((doc) =>{
-            currentnumb.push({...doc.data(), id: doc.id})
-            nummberChange.innerHTML = `${currentnumb[0].nummberValue}`
-            currentnumb.value + 1;
-            updateDoc(update, {
-                number: `${currentnumb.value}`
+
+
+
+changes.addEventListener("click",(e) => {
+    console.log(e.target.classList[0])
+    const docRef = doc(db, 'number', "gzeyGptBTv9PoPig7vHv" );
+    switch (e.target.classList[0]) {
+        case "plus":
+            currentNumber = currentNumber + 1;
+            nummberChange.innerHTML = currentNumber;
+            updateDoc(docRef, {
+                numberValue: `${currentNumber}`
             })
-        })
-      })
-    })
-minus.addEventListener('click', (e) => {
-    console.log("lmao")
+            break;
+        case "minus":
+            currentNumber = currentNumber - 1;
+            nummberChange.innerHTML = currentNumber;
+            updateDoc(docRef, {
+                numberValue: `${currentNumber}`
+            })
+            break;
+        default:
+            break;
+    }
 })
 
 
